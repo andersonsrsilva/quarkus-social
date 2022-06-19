@@ -9,6 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
@@ -16,15 +17,17 @@ import java.util.Set;
 @ApplicationScoped
 public class UserService extends BaseService {
 
-    private final UserRepository repository;
+    private final Validator validator;
+    private final UserRepository userRepository;
 
     @Inject
-    public UserService(UserRepository repository) {
-        this.repository = repository;
+    public UserService(Validator validator, UserRepository userRepository) {
+        this.validator = validator;
+        this.userRepository = userRepository;
     }
 
     public Response list() {
-        List<User> users = this.repository.listAll();
+        List<User> users = this.userRepository.listAll();
         return Response.ok(users).build();
     }
 
@@ -41,7 +44,7 @@ public class UserService extends BaseService {
         User user = new User();
         user.setAge(userRequest.getAge());
         user.setName(userRequest.getName());
-        this.repository.persist(user);
+        this.userRepository.persist(user);
 
         return Response
                 .status(Response.Status.CREATED.getStatusCode())
@@ -51,10 +54,10 @@ public class UserService extends BaseService {
 
     @Transactional
     public Response delete(Long id) {
-        User user = this.repository.findById(id);
+        User user = this.userRepository.findById(id);
 
         if(user != null) {
-            this.repository.delete(user);
+            this.userRepository.delete(user);
             return Response.noContent().build();
         }
 
@@ -73,12 +76,12 @@ public class UserService extends BaseService {
                             withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
         }
 
-        User user = this.repository.findById(id);
+        User user = this.userRepository.findById(id);
 
         if(user != null) {
             user.setName(userRequest.getName());
             user.setAge(userRequest.getAge());
-            this.repository.persist(user);
+            this.userRepository.persist(user);
             return Response.noContent().build();
         }
 
