@@ -16,4 +16,12 @@ public class UserFollowerRepository implements PanacheRepository<UserFollower> {
         return result.isEmpty() ? false : true;
     }
 
+    public List<UserFollower> findByUser(Long userId) {
+        return list("user.id = ?1", userId);
+    }
+
+    public void deleteFollower(Long followerId, Long userId) {
+        delete("follower.id = ?1 and user.id = ?2", followerId, userId);
+    }
+
 }
