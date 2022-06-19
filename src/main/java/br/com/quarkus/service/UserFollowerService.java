@@ -6,8 +6,8 @@ import br.com.quarkus.domain.repository.UserFollowerRepository;
 import br.com.quarkus.domain.repository.UserRepository;
 import br.com.quarkus.rest.dto.response.FollowerPerUserResponse;
 import br.com.quarkus.rest.dto.response.FollowerResponse;
-import br.com.quarkus.rest.dto.resquest.CreateUserFollowerRequest;
-import br.com.quarkus.rest.dto.resquest.DeleteUserFollowerRequest;
+import br.com.quarkus.rest.dto.request.CreateUserFollowerRequest;
+import br.com.quarkus.rest.dto.request.DeleteUserFollowerRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -84,7 +84,7 @@ public class UserFollowerService {
     }
 
     @Transactional
-    public Response delete(Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
+    public Response unFollower(Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
         User user = this.userRepository.findById(userId);
 
         if(user == null) {

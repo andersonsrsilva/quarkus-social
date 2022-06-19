@@ -1,4 +1,4 @@
-package br.com.quarkus.rest.dto.resquest;
+package br.com.quarkus.rest.dto.request;
 
 import lombok.Data;
 

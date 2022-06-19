@@ -1,10 +1,8 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.resquest.CreateUserFollowerRequest;
-import br.com.quarkus.rest.dto.resquest.DeleteUserFollowerRequest;
-import br.com.quarkus.rest.dto.resquest.UpdateUserPostRequest;
+import br.com.quarkus.rest.dto.request.CreateUserFollowerRequest;
+import br.com.quarkus.rest.dto.request.DeleteUserFollowerRequest;
 import br.com.quarkus.service.UserFollowerService;
-import br.com.quarkus.service.UserPostService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -34,8 +32,8 @@ public class UserFollowerResource {
     }
 
     @DELETE
-    public Response delete(@PathParam("userId") Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
-        return this.service.delete(userId, deleteUserFollowerRequest);
+    public Response unFollower(@PathParam("userId") Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
+        return this.service.unFollower(userId, deleteUserFollowerRequest);
     }
 
 }

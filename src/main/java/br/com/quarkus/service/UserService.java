@@ -2,9 +2,9 @@ package br.com.quarkus.service;
 
 import br.com.quarkus.domain.model.User;
 import br.com.quarkus.domain.repository.UserRepository;
-import br.com.quarkus.rest.dto.resquest.CreateUserRequest;
+import br.com.quarkus.rest.dto.request.CreateUserRequest;
 import br.com.quarkus.rest.dto.ResponseError;
-import br.com.quarkus.rest.dto.resquest.UpdateUserRequest;
+import br.com.quarkus.rest.dto.request.UpdateUserRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
-public class UserService extends BaseService {
+public class UserService {
 
     private final Validator validator;
     private final UserRepository userRepository;

@@ -1,7 +1,7 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.resquest.CreateUserRequest;
-import br.com.quarkus.rest.dto.resquest.UpdateUserRequest;
+import br.com.quarkus.rest.dto.request.CreateUserRequest;
+import br.com.quarkus.rest.dto.request.UpdateUserRequest;
 import br.com.quarkus.service.UserService;
 
 import javax.inject.Inject;

@@ -1,7 +1,6 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.resquest.CreateUserPostRequest;
-import br.com.quarkus.rest.dto.resquest.UpdateUserPostRequest;
+import br.com.quarkus.rest.dto.request.UpdateUserPostRequest;
 import br.com.quarkus.service.UserPostService;
 
 import javax.inject.Inject;
@@ -27,8 +26,8 @@ public class UserPostResource {
     }
 
     @GET
-    public Response list(@PathParam("userId") Long userId) {
-        return this.service.list(userId);
+    public Response list(@PathParam("userId") Long userId, @HeaderParam("followerId") Long followerId) {
+        return this.service.list(userId, followerId);
     }
 
 }

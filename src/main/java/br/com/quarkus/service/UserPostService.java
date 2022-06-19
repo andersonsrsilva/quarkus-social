@@ -2,11 +2,12 @@ package br.com.quarkus.service;
 
 import br.com.quarkus.domain.model.User;
 import br.com.quarkus.domain.model.UserPost;
+import br.com.quarkus.domain.repository.UserFollowerRepository;
 import br.com.quarkus.domain.repository.UserPostRepository;
 import br.com.quarkus.domain.repository.UserRepository;
 import br.com.quarkus.rest.dto.ResponseError;
 import br.com.quarkus.rest.dto.response.UserPostResponse;
-import br.com.quarkus.rest.dto.resquest.UpdateUserPostRequest;
+import br.com.quarkus.rest.dto.request.UpdateUserPostRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,20 +26,47 @@ public class UserPostService {
     private final Validator validator;
     private final UserRepository userRepository;
     private final UserPostRepository userPostRepository;
+    private final UserFollowerRepository userFollowerRepository;
 
     @Inject
-    public UserPostService(Validator validator, UserRepository userRepository, UserPostRepository userPostRepository) {
+    public UserPostService(Validator validator,
+                           UserRepository userRepository,
+                           UserPostRepository userPostRepository,
+                           UserFollowerRepository userFollowerRepository) {
         this.validator = validator;
         this.userRepository = userRepository;
         this.userPostRepository = userPostRepository;
+        this.userFollowerRepository = userFollowerRepository;
     }
 
-    public Response list(Long userId) {
+    public Response list(Long userId, Long followerId) {
+        if(followerId == null) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST.getStatusCode())
+                    .build();
+        }
+
         User user = this.userRepository.findById(userId);
 
         if(user == null) {
             return Response
                     .status(Response.Status.NOT_FOUND.getStatusCode())
+                    .build();
+        }
+
+        User follower = userRepository.findById(followerId);
+
+        if(follower == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND.getStatusCode())
+                    .build();
+        }
+
+        boolean followers = userFollowerRepository.followers(follower, user);
+
+        if(!followers) {
+            return Response
+                    .status(Response.Status.FORBIDDEN.getStatusCode())
                     .build();
         }
 
