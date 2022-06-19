@@ -1,6 +1,7 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.CreateUserRequest;
+import br.com.quarkus.rest.dto.resquest.CreateUserRequest;
+import br.com.quarkus.rest.dto.resquest.UpdateUserRequest;
 import br.com.quarkus.service.UserService;
 
 import javax.inject.Inject;
@@ -38,8 +39,8 @@ public class UserResource {
 
     @PUT
     @Path("{id}")
-    public Response update(@PathParam("id") Long id, CreateUserRequest userRequest) {
-        return this.service.update(id, userRequest);
+    public Response update(@PathParam("id") Long id, UpdateUserRequest updateUserRequest) {
+        return this.service.update(id, updateUserRequest);
     }
 
 }

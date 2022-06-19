@@ -1,6 +1,6 @@
 package br.com.quarkus.service;
 
-import br.com.quarkus.rest.dto.CreateUserRequest;
+import br.com.quarkus.rest.dto.resquest.CreateUserRequest;
 import br.com.quarkus.rest.dto.ResponseError;
 
 import javax.enterprise.context.ApplicationScoped;

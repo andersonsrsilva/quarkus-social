@@ -27,7 +27,7 @@ public class ResponseError {
 
         String message = "Validation Error";
 
-        var responseError = new ResponseError(message, erros);
+        ResponseError responseError = new ResponseError(message, erros);
         return responseError;
     }
 

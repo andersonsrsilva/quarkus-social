@@ -4,9 +4,9 @@ import br.com.quarkus.domain.model.User;
 import br.com.quarkus.domain.model.UserPost;
 import br.com.quarkus.domain.repository.UserPostRepository;
 import br.com.quarkus.domain.repository.UserRepository;
-import br.com.quarkus.rest.dto.CreateUserPostRequest;
 import br.com.quarkus.rest.dto.ResponseError;
-import br.com.quarkus.rest.dto.UserPostResponse;
+import br.com.quarkus.rest.dto.response.UserPostResponse;
+import br.com.quarkus.rest.dto.resquest.UpdateUserPostRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 public class UserPostService {
 
     private final Validator validator;
-    private final UserPostRepository userPostRepository;
     private final UserRepository userRepository;
+    private final UserPostRepository userPostRepository;
 
     @Inject
-    public UserPostService(Validator validator, UserPostRepository userPostRepository, UserRepository userRepository) {
+    public UserPostService(Validator validator, UserRepository userRepository, UserPostRepository userPostRepository) {
         this.validator = validator;
-        this.userPostRepository = userPostRepository;
         this.userRepository = userRepository;
+        this.userPostRepository = userPostRepository;
     }
 
     public Response list(Long userId) {
@@ -43,7 +43,7 @@ public class UserPostService {
         }
 
         var list= this.userPostRepository.postsByUser(user);
-        var userPostResponseList =  list.stream()
+        List<UserPostResponse> userPostResponseList =  list.stream()
                 //.map(post -> UserPostResponse.fromEntity(post))
                 .map(UserPostResponse::fromEntity)
                 .collect(Collectors.toList());
@@ -51,8 +51,8 @@ public class UserPostService {
     }
 
     @Transactional
-    public Response create(Long userId, CreateUserPostRequest userPostRequest) {
-        Set<ConstraintViolation<CreateUserPostRequest>> violations = this.validator.validate(userPostRequest);
+    public Response create(Long userId, UpdateUserPostRequest updateUserPostRequest) {
+        Set<ConstraintViolation<UpdateUserPostRequest>> violations = this.validator.validate(updateUserPostRequest);
 
         if(!violations.isEmpty()) {
             return  ResponseError
@@ -70,7 +70,7 @@ public class UserPostService {
 
         UserPost userPost = new UserPost();
         userPost.setUser(user);
-        userPost.setText(userPostRequest.getText());
+        userPost.setText(updateUserPostRequest.getText());
         userPost.setDateTime(LocalDateTime.now());
         this.userPostRepository.persist(userPost);
 

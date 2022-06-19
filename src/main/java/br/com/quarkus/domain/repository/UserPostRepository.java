@@ -11,7 +11,7 @@ import java.util.List;
 public class UserPostRepository implements PanacheRepository<UserPost> {
 
     public List<UserPost> postsByUser(User user) {
-        return list("user = ?1 order by dateTime DESC", user);
+        return list("user = ?1 ORDER BY dateTime DESC", user);
     }
 
 }

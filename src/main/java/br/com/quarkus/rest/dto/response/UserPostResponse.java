@@ -1,4 +1,4 @@
-package br.com.quarkus.rest.dto;
+package br.com.quarkus.rest.dto.response;
 
 import br.com.quarkus.domain.model.UserPost;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class UserPostResponse {
     private LocalDateTime dateTime;
 
     public static UserPostResponse fromEntity(UserPost userPost) {
-        var response = new UserPostResponse();
+        UserPostResponse response = new UserPostResponse();
         response.setText(userPost.getText());
         response.setDateTime(userPost.getDateTime());
         return response;

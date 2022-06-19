@@ -2,8 +2,9 @@ package br.com.quarkus.service;
 
 import br.com.quarkus.domain.model.User;
 import br.com.quarkus.domain.repository.UserRepository;
-import br.com.quarkus.rest.dto.CreateUserRequest;
+import br.com.quarkus.rest.dto.resquest.CreateUserRequest;
 import br.com.quarkus.rest.dto.ResponseError;
+import br.com.quarkus.rest.dto.resquest.UpdateUserRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -67,8 +68,8 @@ public class UserService extends BaseService {
     }
 
     @Transactional
-    public Response update(Long id, CreateUserRequest userRequest) {
-        Set<ConstraintViolation<CreateUserRequest>> violations = this.validator.validate(userRequest);
+    public Response update(Long id, UpdateUserRequest updateUserRequest) {
+        Set<ConstraintViolation<UpdateUserRequest>> violations = this.validator.validate(updateUserRequest);
 
         if(!violations.isEmpty()) {
             return  ResponseError
@@ -79,8 +80,8 @@ public class UserService extends BaseService {
         User user = this.userRepository.findById(id);
 
         if(user != null) {
-            user.setName(userRequest.getName());
-            user.setAge(userRequest.getAge());
+            user.setName(updateUserRequest.getName());
+            user.setAge(updateUserRequest.getAge());
             this.userRepository.persist(user);
             return Response.noContent().build();
         }
