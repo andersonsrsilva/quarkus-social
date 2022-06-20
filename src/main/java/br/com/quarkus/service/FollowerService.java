@@ -48,6 +48,7 @@ public class FollowerService {
         if(userId.equals(createFollowerRequest.getFollowerId())) {
             return Response
                     .status(Response.Status.CONFLICT.getStatusCode())
+                    .entity("You can't follow yourself")
                     .build();
         }
 
