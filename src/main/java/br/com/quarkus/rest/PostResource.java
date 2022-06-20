@@ -1,7 +1,7 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.request.UpdateUserPostRequest;
-import br.com.quarkus.service.UserPostService;
+import br.com.quarkus.rest.dto.request.UpdatePostRequest;
+import br.com.quarkus.service.PostService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -11,18 +11,18 @@ import javax.ws.rs.core.Response;
 @Path("/users/{userId}/posts")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class UserPostResource {
+public class PostResource {
 
-    private final UserPostService service;
+    private final PostService service;
 
     @Inject
-    public UserPostResource(UserPostService service) {
+    public PostResource(PostService service) {
         this.service = service;
     }
 
     @POST
-    public Response create(@PathParam("userId") Long userId, UpdateUserPostRequest updateUserPostRequest) {
-        return this.service.create(userId, updateUserPostRequest);
+    public Response create(@PathParam("userId") Long userId, UpdatePostRequest updatePostRequest) {
+        return this.service.create(userId, updatePostRequest);
     }
 
     @GET

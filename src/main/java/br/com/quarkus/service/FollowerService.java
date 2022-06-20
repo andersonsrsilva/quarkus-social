@@ -1,40 +1,51 @@
 package br.com.quarkus.service;
 
+import br.com.quarkus.domain.model.Follower;
 import br.com.quarkus.domain.model.User;
-import br.com.quarkus.domain.model.UserFollower;
-import br.com.quarkus.domain.repository.UserFollowerRepository;
+import br.com.quarkus.domain.repository.FollowerRepository;
 import br.com.quarkus.domain.repository.UserRepository;
+import br.com.quarkus.rest.dto.ResponseError;
+import br.com.quarkus.rest.dto.request.CreateFollowerRequest;
+import br.com.quarkus.rest.dto.request.DeleteFollowerRequest;
+import br.com.quarkus.rest.dto.request.UpdatePostRequest;
 import br.com.quarkus.rest.dto.response.FollowerPerUserResponse;
 import br.com.quarkus.rest.dto.response.FollowerResponse;
-import br.com.quarkus.rest.dto.request.CreateUserFollowerRequest;
-import br.com.quarkus.rest.dto.request.DeleteUserFollowerRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class UserFollowerService {
+public class FollowerService {
 
     private final Validator validator;
     private final UserRepository userRepository;
-    private final UserFollowerRepository userFollowerRepository;
+    private final FollowerRepository followerRepository;
 
     @Inject
-    public UserFollowerService(Validator validator, UserRepository userRepository, UserFollowerRepository userFollowerRepository) {
+    public FollowerService(Validator validator, UserRepository userRepository, FollowerRepository followerRepository) {
         this.validator = validator;
         this.userRepository = userRepository;
-        this.userFollowerRepository = userFollowerRepository;
+        this.followerRepository = followerRepository;
     }
 
     @Transactional
-    public Response create(Long userId, CreateUserFollowerRequest createUserFollowerRequest) {
+    public Response create(Long userId, CreateFollowerRequest createFollowerRequest) {
+        Set<ConstraintViolation<CreateFollowerRequest>> violations = this.validator.validate(createFollowerRequest);
 
-        if(userId.equals(createUserFollowerRequest.getFollowerId())) {
+        if(!violations.isEmpty()) {
+            return  ResponseError
+                    .createFromValidation(violations).
+                            withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+        }
+
+        if(userId.equals(createFollowerRequest.getFollowerId())) {
             return Response
                     .status(Response.Status.CONFLICT.getStatusCode())
                     .build();
@@ -48,14 +59,14 @@ public class UserFollowerService {
                     .build();
         }
 
-        User follower = this.userRepository.findById(createUserFollowerRequest.getFollowerId());
-        boolean followers = this.userFollowerRepository.followers(follower, user);
+        User follower = this.userRepository.findById(createFollowerRequest.getFollowerId());
+        boolean followers = this.followerRepository.followers(follower, user);
 
         if(!followers) {
-            UserFollower userFollower = new UserFollower();
+            Follower userFollower = new Follower();
             userFollower.setUser(user);
             userFollower.setFollower(follower);
-            this.userFollowerRepository.persist(userFollower);
+            this.followerRepository.persist(userFollower);
         }
 
         return Response
@@ -72,7 +83,7 @@ public class UserFollowerService {
                     .build();
         }
 
-        List<UserFollower> followers = this.userFollowerRepository.findByUser(userId);
+        List<Follower> followers = this.followerRepository.findByUser(userId);
 
         FollowerPerUserResponse followerPerUserResponse = new FollowerPerUserResponse();
         followerPerUserResponse.setFollowersCount(followers.size());
@@ -84,7 +95,15 @@ public class UserFollowerService {
     }
 
     @Transactional
-    public Response unFollower(Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
+    public Response unFollower(Long userId, DeleteFollowerRequest deleteFollowerRequest) {
+        Set<ConstraintViolation<DeleteFollowerRequest>> violations = this.validator.validate(deleteFollowerRequest);
+
+        if(!violations.isEmpty()) {
+            return  ResponseError
+                    .createFromValidation(violations).
+                            withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+        }
+
         User user = this.userRepository.findById(userId);
 
         if(user == null) {
@@ -93,7 +112,7 @@ public class UserFollowerService {
                     .build();
         }
 
-        this.userFollowerRepository.deleteFollower(deleteUserFollowerRequest.getFollowerId(), userId);
+        this.followerRepository.deleteFollower(deleteFollowerRequest.getFollowerId(), userId);
 
         return Response
                 .status(Response.Status.NO_CONTENT.getStatusCode())

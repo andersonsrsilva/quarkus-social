@@ -1,13 +1,13 @@
 package br.com.quarkus.service;
 
 import br.com.quarkus.domain.model.User;
-import br.com.quarkus.domain.model.UserPost;
-import br.com.quarkus.domain.repository.UserFollowerRepository;
-import br.com.quarkus.domain.repository.UserPostRepository;
+import br.com.quarkus.domain.model.Post;
+import br.com.quarkus.domain.repository.FollowerRepository;
+import br.com.quarkus.domain.repository.PostRepository;
 import br.com.quarkus.domain.repository.UserRepository;
 import br.com.quarkus.rest.dto.ResponseError;
-import br.com.quarkus.rest.dto.response.UserPostResponse;
-import br.com.quarkus.rest.dto.request.UpdateUserPostRequest;
+import br.com.quarkus.rest.dto.response.PostResponse;
+import br.com.quarkus.rest.dto.request.UpdatePostRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,22 +21,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class UserPostService {
+public class PostService {
 
     private final Validator validator;
     private final UserRepository userRepository;
-    private final UserPostRepository userPostRepository;
-    private final UserFollowerRepository userFollowerRepository;
+    private final PostRepository postRepository;
+    private final FollowerRepository followerRepository;
 
     @Inject
-    public UserPostService(Validator validator,
-                           UserRepository userRepository,
-                           UserPostRepository userPostRepository,
-                           UserFollowerRepository userFollowerRepository) {
+    public PostService(Validator validator,
+                       UserRepository userRepository,
+                       PostRepository postRepository,
+                       FollowerRepository followerRepository) {
         this.validator = validator;
         this.userRepository = userRepository;
-        this.userPostRepository = userPostRepository;
-        this.userFollowerRepository = userFollowerRepository;
+        this.postRepository = postRepository;
+        this.followerRepository = followerRepository;
     }
 
     public Response list(Long userId, Long followerId) {
@@ -62,7 +62,7 @@ public class UserPostService {
                     .build();
         }
 
-        boolean followers = userFollowerRepository.followers(follower, user);
+        boolean followers = followerRepository.followers(follower, user);
 
         if(!followers) {
             return Response
@@ -70,17 +70,17 @@ public class UserPostService {
                     .build();
         }
 
-        var list= this.userPostRepository.postsByUser(user);
-        List<UserPostResponse> userPostResponseList =  list.stream()
+        var list= this.postRepository.postsByUser(user);
+        List<PostResponse> userPostResponseList =  list.stream()
                 //.map(post -> UserPostResponse.fromEntity(post))
-                .map(UserPostResponse::fromEntity)
+                .map(PostResponse::fromEntity)
                 .collect(Collectors.toList());
         return Response.ok(userPostResponseList).build();
     }
 
     @Transactional
-    public Response create(Long userId, UpdateUserPostRequest updateUserPostRequest) {
-        Set<ConstraintViolation<UpdateUserPostRequest>> violations = this.validator.validate(updateUserPostRequest);
+    public Response create(Long userId, UpdatePostRequest updatePostRequest) {
+        Set<ConstraintViolation<UpdatePostRequest>> violations = this.validator.validate(updatePostRequest);
 
         if(!violations.isEmpty()) {
             return  ResponseError
@@ -96,11 +96,11 @@ public class UserPostService {
                     .build();
         }
 
-        UserPost userPost = new UserPost();
+        Post userPost = new Post();
         userPost.setUser(user);
-        userPost.setText(updateUserPostRequest.getText());
+        userPost.setText(updatePostRequest.getText());
         userPost.setDateTime(LocalDateTime.now());
-        this.userPostRepository.persist(userPost);
+        this.postRepository.persist(userPost);
 
         return Response
                 .status(Response.Status.CREATED.getStatusCode())

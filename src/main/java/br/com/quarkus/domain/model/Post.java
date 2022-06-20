@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "users_posts")
-public class UserPost {
+public class Post {
 
     @Id
     @GeneratedValue

@@ -1,8 +1,8 @@
 package br.com.quarkus.rest;
 
-import br.com.quarkus.rest.dto.request.CreateUserFollowerRequest;
-import br.com.quarkus.rest.dto.request.DeleteUserFollowerRequest;
-import br.com.quarkus.service.UserFollowerService;
+import br.com.quarkus.rest.dto.request.CreateFollowerRequest;
+import br.com.quarkus.rest.dto.request.DeleteFollowerRequest;
+import br.com.quarkus.service.FollowerService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -12,17 +12,17 @@ import javax.ws.rs.core.Response;
 @Path("/users/{userId}/followers")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class UserFollowerResource {
+public class FollowerResource {
 
-    private final UserFollowerService service;
+    private final FollowerService service;
 
     @Inject
-    public UserFollowerResource(UserFollowerService service) {
+    public FollowerResource(FollowerService service) {
         this.service = service;
     }
 
     @PUT
-    public Response create(@PathParam("userId") Long userId, CreateUserFollowerRequest createUserFollowerRequest) {
+    public Response create(@PathParam("userId") Long userId, CreateFollowerRequest createUserFollowerRequest) {
         return this.service.create(userId, createUserFollowerRequest);
     }
 
@@ -32,7 +32,7 @@ public class UserFollowerResource {
     }
 
     @DELETE
-    public Response unFollower(@PathParam("userId") Long userId, DeleteUserFollowerRequest deleteUserFollowerRequest) {
+    public Response unFollower(@PathParam("userId") Long userId, DeleteFollowerRequest deleteUserFollowerRequest) {
         return this.service.unFollower(userId, deleteUserFollowerRequest);
     }
 

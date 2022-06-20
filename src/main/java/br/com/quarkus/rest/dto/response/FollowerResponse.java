@@ -1,6 +1,6 @@
 package br.com.quarkus.rest.dto.response;
 
-import br.com.quarkus.domain.model.UserFollower;
+import br.com.quarkus.domain.model.Follower;
 import lombok.Data;
 
 @Data
@@ -12,7 +12,7 @@ public class FollowerResponse {
     public FollowerResponse() {
     }
 
-    public FollowerResponse(UserFollower userFollower) {
+    public FollowerResponse(Follower userFollower) {
         this(userFollower.getId(), userFollower.getFollower().getName());
     }
 
