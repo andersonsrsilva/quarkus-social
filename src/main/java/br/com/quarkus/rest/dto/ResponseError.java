@@ -15,19 +15,18 @@ import java.util.stream.Collectors;
 public class ResponseError {
 
     public static final int UNPROCESSABLE_ENTITY_STATUS = 422;
+    public static final String UNPROCESSABLE_ENTITY_MESSAGE= "Validation Error";
 
     private String message;
-    private Collection<FieldError> erros;
+    private Collection<FieldError> errors;
 
     public static <T> ResponseError createFromValidation(Set<ConstraintViolation<T>> violations) {
-        List<FieldError> erros = violations
+        List<FieldError> errors = violations
                 .stream()
                 .map(value -> new FieldError(value.getPropertyPath().toString(), value.getMessage()))
                 .collect(Collectors.toList());
 
-        String message = "Validation Error";
-
-        ResponseError responseError = new ResponseError(message, erros);
+        ResponseError responseError = new ResponseError(ResponseError.UNPROCESSABLE_ENTITY_MESSAGE, errors);
         return responseError;
     }
 

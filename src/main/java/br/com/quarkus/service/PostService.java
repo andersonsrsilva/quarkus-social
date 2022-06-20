@@ -40,12 +40,6 @@ public class PostService {
     }
 
     public Response list(Long userId, Long followerId) {
-        if(followerId == null) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST.getStatusCode())
-                    .build();
-        }
-
         User user = this.userRepository.findById(userId);
 
         if(user == null) {
@@ -54,11 +48,19 @@ public class PostService {
                     .build();
         }
 
+        if(followerId == null) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST.getStatusCode())
+                    .entity("You forgot the header followerId")
+                    .build();
+        }
+
         User follower = userRepository.findById(followerId);
 
         if(follower == null) {
             return Response
                     .status(Response.Status.NOT_FOUND.getStatusCode())
+                    .entity("Inexistent followerId")
                     .build();
         }
 
@@ -67,6 +69,7 @@ public class PostService {
         if(!followers) {
             return Response
                     .status(Response.Status.FORBIDDEN.getStatusCode())
+                    .entity("You can't see these posts")
                     .build();
         }
 

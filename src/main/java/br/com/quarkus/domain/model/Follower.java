@@ -6,11 +6,11 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "users_followers")
+@Table(name = "followers")
 public class Follower {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     @ManyToOne
