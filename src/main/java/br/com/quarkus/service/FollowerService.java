@@ -7,7 +7,6 @@ import br.com.quarkus.domain.repository.UserRepository;
 import br.com.quarkus.rest.dto.ResponseError;
 import br.com.quarkus.rest.dto.request.CreateFollowerRequest;
 import br.com.quarkus.rest.dto.request.DeleteFollowerRequest;
-import br.com.quarkus.rest.dto.request.UpdatePostRequest;
 import br.com.quarkus.rest.dto.response.FollowerPerUserResponse;
 import br.com.quarkus.rest.dto.response.FollowerResponse;
 
@@ -113,7 +112,15 @@ public class FollowerService {
                     .build();
         }
 
-        this.followerRepository.deleteFollower(deleteFollowerRequest.getFollowerId(), userId);
+        User follower = this.userRepository.findById(deleteFollowerRequest.getFollowerId());
+
+        if(follower == null) {
+            return Response
+                    .status(Response.Status.NOT_FOUND.getStatusCode())
+                    .build();
+        }
+
+        this.followerRepository.deleteFollower(follower, user);
 
         return Response
                 .status(Response.Status.NO_CONTENT.getStatusCode())

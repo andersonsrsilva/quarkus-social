@@ -5,6 +5,7 @@ import br.com.quarkus.domain.model.User;
 import br.com.quarkus.domain.repository.FollowerRepository;
 import br.com.quarkus.domain.repository.UserRepository;
 import br.com.quarkus.rest.dto.request.CreateFollowerRequest;
+import br.com.quarkus.rest.dto.request.DeleteFollowerRequest;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -58,7 +59,7 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should return 409 when Follower Id is equal to User id")
-    public void sameUserAsFollowerTest(){
+    public void sameUserAsFollowerTest() {
 
         var body = new CreateFollowerRequest();
         body.setFollowerId(userId);
@@ -76,7 +77,7 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should return 404 on follow a user when User id doen't exist")
-    public void userNotFoundWhenTryingToFollowTest(){
+    public void userNotFoundWhenTryingToFollowTest() {
 
         var body = new CreateFollowerRequest();
         body.setFollowerId(userId);
@@ -95,8 +96,7 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should follow a user")
-    public void followUserTest(){
-
+    public void followUserTest() {
         var body = new CreateFollowerRequest();
         body.setFollowerId(followerId);
 
@@ -112,7 +112,7 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should return 404 on list user followers and User id doen't exist")
-    public void userNotFoundWhenListingFollowersTest(){
+    public void userNotFoundWhenListingFollowersTest() {
         var inexistentUserId = 999;
 
         given()
@@ -126,7 +126,7 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should list a user's followers")
-    public void listFollowersTest(){
+    public void listFollowersTest() {
         var response =
                 given()
                         .contentType(ContentType.JSON)
@@ -146,12 +146,14 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should return 404 on unfollow user and User id doen't exist")
-    public void userNotFoundWhenUnfollowingAUserTest(){
-        var inexistentUserId = 999;
+    public void userNotFoundWhenUnfollowingAUserTest() {
+        DeleteFollowerRequest body = new DeleteFollowerRequest();
+        body.setFollowerId(999L);
 
         given()
-                .pathParam("userId", inexistentUserId)
-                .queryParam("followerId", followerId)
+                .contentType(ContentType.JSON)
+                .body(body)
+                .pathParam("userId", userId)
                 .when()
                 .delete()
                 .then()
@@ -160,10 +162,14 @@ class FollowerResourceTest {
 
     @Test
     @DisplayName("should Unfollow an user")
-    public void unfollowUserTest(){
+    public void unfollowUserTest() {
+        DeleteFollowerRequest body = new DeleteFollowerRequest();
+        body.setFollowerId(userId);
+
         given()
+                .contentType(ContentType.JSON)
+                .body(body)
                 .pathParam("userId", userId)
-                .queryParam("followerId", followerId)
                 .when()
                 .delete()
                 .then()
